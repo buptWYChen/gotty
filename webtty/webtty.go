@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"sync"
 
 	"github.com/pkg/errors"
@@ -91,6 +92,9 @@ func (wt *WebTTY) Run(ctx context.Context) error {
 				if err != nil {
 					return ErrMasterClosed
 				}
+
+				// 审计日志
+				fmt.Println("[LOG]:", string(buffer[:n]))
 
 				err = wt.handleMasterReadEvent(buffer[:n])
 				if err != nil {
