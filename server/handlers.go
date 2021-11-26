@@ -173,9 +173,9 @@ func (server *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	// 测试输出
 	fmt.Println("请求url成功")
 	// 参数获取,按照请求参数名获取参数值
-	err := r.ParseForm()
-	if err != nil {
-		fmt.Println("Url ParseForm error")
+	e := r.ParseForm()
+	if e != nil {
+		fmt.Println("Url ParseForm error: ", e)
 		return
 	}
 	name := r.FormValue("userAccount")
