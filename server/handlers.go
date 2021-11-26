@@ -169,6 +169,10 @@ func (server *Server) processWSConn(ctx context.Context, conn *websocket.Conn) e
 }
 
 func (server *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
+
+	// 测试输出
+	fmt.Println("请求url成功")
+
 	titleVars := server.titleVariables(
 		[]string{"server", "master"},
 		map[string]map[string]interface{}{
