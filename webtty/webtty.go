@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -59,7 +60,7 @@ func New(masterConn Master, slave Slave, options ...Option) (*WebTTY, error) {
 // after the context is canceled. Closing them is caller's
 // responsibility.
 // If the connection to one end gets closed, returns ErrSlaveClosed or ErrMasterClosed.
-func (wt *WebTTY) Run(ctx context.Context) error {
+func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string) error {
 	err := wt.sendInitializeMessage()
 	if err != nil {
 		return errors.Wrapf(err, "failed to send initializing message")
@@ -94,7 +95,7 @@ func (wt *WebTTY) Run(ctx context.Context) error {
 				}
 
 				// 审计日志
-				fmt.Println("[LOG]:", string(buffer[:n]))
+				fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", string(buffer[:n])[1:], "]")
 
 				err = wt.handleMasterReadEvent(buffer[:n])
 				if err != nil {
