@@ -172,6 +172,15 @@ func (server *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 
 	// 测试输出
 	fmt.Println("请求url成功")
+	// 参数获取,按照请求参数名获取参数值
+	err := r.ParseForm()
+	if err != nil {
+		fmt.Println("Url ParseForm error")
+		return
+	}
+	name := r.FormValue("userAccount")
+	age := r.FormValue("clusterId")
+	fmt.Println("userAccount:", name, " clusterId:", age)
 
 	titleVars := server.titleVariables(
 		[]string{"server", "master"},
