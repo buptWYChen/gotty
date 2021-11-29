@@ -186,7 +186,7 @@ func (server *Server) setupHandlers(ctx context.Context, cancel context.CancelFu
 	staticFileHandler := http.FileServer(
 		&assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, Prefix: "static"},
 	)
-
+	//udata := &webtty.UserData{}
 	var siteMux = http.NewServeMux()
 	siteMux.HandleFunc(pathPrefix, server.handleIndex)
 	siteMux.Handle(pathPrefix+"js/", http.StripPrefix(pathPrefix, staticFileHandler))
