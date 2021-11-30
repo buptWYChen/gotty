@@ -113,7 +113,7 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 							log = log[:len(log)-2]
 						}
 					} else if string(buffer[0]) == string([]byte{49}) { // 判断内容为正常输入
-						log = log + string(buffer[:n])
+						log = log + string(buffer[1:n])
 					}
 				}
 
