@@ -102,12 +102,15 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 				// 空格	- [49 32]
 				// 正常内容 - [49 ascii]
 				// 上下左右 四个字符
-				fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", string(buffer[:n]), "]", buffer[:n])
+
+				// 调试用的日志
+				//fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", string(buffer[:n]), "]", buffer[:n])
 
 				if len(buffer[:n]) == 2 {
 					if string(buffer[:n]) == string([]byte{49, 13}) { // 判断内容为回车
 						// 审计日志输出
 						fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", log, "]")
+						log = ""
 					} else if string(buffer[:n]) == string([]byte{49, 127}) { // 判断内容为退格
 						if len(log) >= 2 {
 							log = log[:len(log)-2]
@@ -119,7 +122,8 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 					}
 				}
 
-				fmt.Println("log: ", log)
+				// 调试用的日志
+				//fmt.Println("log: ", log)
 
 				err = wt.handleMasterReadEvent(buffer[:n])
 				if err != nil {
