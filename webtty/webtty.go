@@ -96,14 +96,28 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 				}
 
 				// 审计日志
+				// （ 操作 - buffer[:n] ）
+				// 退格 - [49 127]
+				// 空 - [50]
+				// 空格	- [49 32]
+				// 正常内容 - [49 ascii]
+				// 上下左右 四个字符
 				fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", string(buffer[:n]), "]", buffer[:n])
-				if string(buffer[:n]) != string([]byte{50}) { // 判断内容为空
-					log = log + string(buffer[:n])
+
+				if len(buffer[:n]) == 2 {
+					if string(buffer[:n]) == string([]byte{49, 13}) { // 判断内容为回车
+						// 审计日志输出
+						fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", log, "]")
+					} else if string(buffer[:n]) == string([]byte{49, 127}) { // 判断内容为退格
+						if len(log) > 0 {
+							log = log[:len(log)-2]
+						}
+					} else if string(buffer[0]) == string([]byte{49}) { // 判断内容为正常输入
+						log = log + string(buffer[:n])
+					}
 				}
-				if string(buffer[:n]) == string([]byte{49, 13}) { // 判断内容为回车
-					log = ""
-				}
-				fmt.Println(log)
+
+				fmt.Println("log: ", log)
 
 				err = wt.handleMasterReadEvent(buffer[:n])
 				if err != nil {
