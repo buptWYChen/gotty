@@ -109,8 +109,10 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 						// 审计日志输出
 						fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", log, "]")
 					} else if string(buffer[:n]) == string([]byte{49, 127}) { // 判断内容为退格
-						if len(log) > 0 {
+						if len(log) >= 2 {
 							log = log[:len(log)-2]
+						} else if len(log) == 1 {
+							log = ""
 						}
 					} else if string(buffer[0]) == string([]byte{49}) { // 判断内容为正常输入
 						log = log + string(buffer[1])
