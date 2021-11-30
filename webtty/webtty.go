@@ -97,10 +97,10 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 
 				// 审计日志
 				fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", string(buffer[1:n]), "]", buffer[1:n])
-				if string(buffer[1:n]) != " " {
+				if string(buffer[1:n]) != string([]byte{50}) { // 判断内容为空
 					log = log + string(buffer[:n])[1:]
 				}
-				if string(buffer[1:n]) == "\r\n" {
+				if string(buffer[1:n]) == string([]byte{49, 13}) { // 判断内容为回车
 					log = ""
 				}
 				fmt.Println(log)
