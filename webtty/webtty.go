@@ -88,6 +88,7 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 	go func() {
 		errs <- func() error {
 			buffer := make([]byte, wt.bufferSize)
+			var log string
 			for {
 				n, err := wt.masterConn.Read(buffer)
 				if err != nil {
@@ -95,7 +96,14 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 				}
 
 				// 审计日志
-				fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", string(buffer[:n])[1:], "]")
+				fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", string(buffer[:n])[1:], "]", buffer[:n])
+				if string(buffer[:n])[1:] != " " {
+					log = log + string(buffer[:n])[1:]
+				}
+				if string(buffer[:n])[1:] == "\r\n" {
+					log = ""
+				}
+				fmt.Println(log)
 
 				err = wt.handleMasterReadEvent(buffer[:n])
 				if err != nil {
