@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 	"sync/atomic"
 
 	"github.com/gorilla/websocket"
@@ -50,6 +51,10 @@ func (server *Server) generateHandleWS(ctx context.Context, cancel context.Cance
 			http.Error(w, "cluster info error", http.StatusForbidden)
 			return
 		}
+
+		// data参数处理，解决将`+`编码为空格` `的问题
+		data = strings.ReplaceAll(data, ` `, `+`)
+
 		// AES解密
 		key := "clusterinfodata1"
 		decryptCode, err := utils.AesDecrypt(data, key)
