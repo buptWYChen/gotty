@@ -221,9 +221,9 @@ func (server *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Url ParseForm error: ", e)
 		return
 	}
-	userAccount := r.FormValue("userAccount")
-	clusterId := r.FormValue("clusterId")
-	fmt.Println("userAccount:", userAccount, " clusterId:", clusterId)
+	//userAccount := r.FormValue("userAccount")
+	//clusterId := r.FormValue("clusterId")
+	//fmt.Println("userAccount:", userAccount, " clusterId:", clusterId)
 
 	titleVars := server.titleVariables(
 		[]string{"server", "master"},
