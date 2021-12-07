@@ -61,7 +61,7 @@ func (server *Server) generateHandleWS(ctx context.Context, cancel context.Cance
 
 		// json字符串获取信息
 		var clusterInfoData ClusterInfoData
-		err = json.Unmarshal([]byte(decryptCode), &data)
+		err = json.Unmarshal([]byte(decryptCode), &clusterInfoData)
 		if err != nil {
 			http.Error(w, "cluster info error", http.StatusForbidden)
 			return
