@@ -18,8 +18,8 @@ import (
 )
 
 type ClusterInfoData struct {
-	userAccount string `json:"userAccount"`
-	clusterId   string `json:"clusterId"`
+	UserAccount string `json:"userAccount"`
+	ClusterId   string `json:"clusterId"`
 }
 
 func (server *Server) generateHandleWS(ctx context.Context, cancel context.CancelFunc, counter *counter) http.HandlerFunc {
@@ -67,8 +67,8 @@ func (server *Server) generateHandleWS(ctx context.Context, cancel context.Cance
 			return
 		}
 		fmt.Println(clusterInfoData)
-		userAccount := clusterInfoData.userAccount
-		clusterId := clusterInfoData.clusterId
+		userAccount := clusterInfoData.UserAccount
+		clusterId := clusterInfoData.ClusterId
 		fmt.Println("userAccount:", userAccount, " clusterId:", clusterId)
 
 		if server.options.Once {
