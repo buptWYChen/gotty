@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/buptWYChen/gotty/utils"
 	"log"
 	"net/http"
 	"net/url"
@@ -15,6 +16,11 @@ import (
 
 	"github.com/buptWYChen/gotty/webtty"
 )
+
+type ClusterInfoData struct {
+	userAccount string `json:"userAccount"`
+	clusterId   string `json:"clusterId"`
+}
 
 func (server *Server) generateHandleWS(ctx context.Context, cancel context.CancelFunc, counter *counter) http.HandlerFunc {
 	once := new(int64)
@@ -34,8 +40,35 @@ func (server *Server) generateHandleWS(ctx context.Context, cancel context.Cance
 			fmt.Println("Url ParseForm error: ", e)
 			return
 		}
-		userAccount := r.FormValue("userAccount")
-		clusterId := r.FormValue("clusterId")
+
+		// 获取集群信息AES密文
+		data := r.FormValue("data")
+		fmt.Println("data:", data)
+
+		// 校验数据
+		if data == "" {
+			http.Error(w, "cluster info error", http.StatusForbidden)
+			return
+		}
+		// AES解密
+		key := "clusterinfodata1"
+		decryptCode, err := utils.AesDecrypt(data, key)
+		if err != nil {
+			http.Error(w, "cluster info error", http.StatusForbidden)
+			return
+		}
+		fmt.Println("解密结果：", decryptCode)
+
+		// json字符串获取信息
+		var clusterInfoData ClusterInfoData
+		err = json.Unmarshal([]byte(decryptCode), &data)
+		if err != nil {
+			http.Error(w, "cluster info error", http.StatusForbidden)
+			return
+		}
+		fmt.Println(clusterInfoData)
+		userAccount := clusterInfoData.userAccount
+		clusterId := clusterInfoData.clusterId
 		fmt.Println("userAccount:", userAccount, " clusterId:", clusterId)
 
 		if server.options.Once {
