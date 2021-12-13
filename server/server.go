@@ -196,6 +196,9 @@ func (server *Server) setupHandlers(ctx context.Context, cancel context.CancelFu
 	siteMux.HandleFunc(pathPrefix+"auth_token.js", server.handleAuthToken)
 	siteMux.HandleFunc(pathPrefix+"config.js", server.handleConfig)
 
+	// ping-pong测试
+	siteMux.HandleFunc(pathPrefix+"ping/", server.Pong)
+
 	siteHandler := http.Handler(siteMux)
 
 	if server.options.EnableBasicAuth {

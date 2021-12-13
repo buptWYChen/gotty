@@ -261,6 +261,11 @@ func (server *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	w.Write(indexBuf.Bytes())
 }
 
+func (server *Server) Pong(w http.ResponseWriter, r *http.Request) {
+	// ping-pong测试
+	w.Write([]byte("pong"))
+}
+
 func (server *Server) handleAuthToken(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/javascript")
 	// @TODO hashing?
