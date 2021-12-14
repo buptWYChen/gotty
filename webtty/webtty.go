@@ -147,7 +147,7 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 }
 
 // 审计日志输出
-const LogUrl = "http://10.253.173.77:32654/cluster/info/1/kafka?command="
+const LogUrl = "http://10.209.31.19:32654/cluster/info/1/kafka?command="
 
 func LogOutpu(s string) {
 	Get(LogUrl + s)
