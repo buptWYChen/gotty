@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"sync"
 	"time"
 
@@ -109,7 +111,9 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 				if len(buffer[:n]) == 2 {
 					if string(buffer[:n]) == string([]byte{49, 13}) { // 判断内容为回车
 						// 审计日志输出
+						LogOutpu("[集群:" + clusterId + "]-[用户:" + userAccount + "]-[时间:" + time.Now().Format("2006-01-02 15:04:05") + "]-[LOG:" + log + "]")
 						fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", log, "]")
+
 						log = ""
 					} else if string(buffer[:n]) == string([]byte{49, 127}) { // 判断内容为退格
 						if len(log) >= 2 {
@@ -140,6 +144,26 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 	}
 
 	return err
+}
+
+// 审计日志输出
+const LogUrl = "http://10.253.173.77:32654/cluster/info/1/kafka?command="
+
+func LogOutpu(s string) {
+	Get(LogUrl + s)
+	//fmt.Println(LogUrl + s)
+}
+func Get(url string) string {
+	res, err := http.Get(url)
+	if err != nil {
+		return fmt.Sprintln(err)
+	}
+	robots, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		return fmt.Sprintln(err)
+	}
+	return string(robots)
 }
 
 func (wt *WebTTY) sendInitializeMessage() error {
