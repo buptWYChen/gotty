@@ -56,6 +56,14 @@ func New(masterConn Master, slave Slave, options ...Option) (*WebTTY, error) {
 	return wt, nil
 }
 
+// 发送给元数据应用的日志
+type Metadatalog struct {
+	ClusterId   string
+	UserAccount string
+	Time        string
+	Log         string
+}
+
 // Run starts the main process of the WebTTY.
 // This method blocks until the context is canceled.
 // Note that the master and slave are left intact even
@@ -110,6 +118,18 @@ func (wt *WebTTY) Run(ctx context.Context, userAccount string, clusterId string)
 
 				if len(buffer[:n]) == 2 {
 					if string(buffer[:n]) == string([]byte{49, 13}) { // 判断内容为回车
+
+						var metadatalog Metadatalog
+						metadatalog.ClusterId = clusterId
+						metadatalog.UserAccount = userAccount
+						metadatalog.Time = time.Now().Format("2006-01-02 15:04:05")
+						metadatalog.Log = log
+						jsonBytes, err := json.Marshal(metadatalog)
+						if err != nil {
+							fmt.Println(err)
+						}
+						fmt.Println("metadatalog: ", string(jsonBytes))
+
 						// 审计日志输出
 						LogOutpu("[集群:" + clusterId + "]-[用户:" + userAccount + "]-[时间:" + time.Now().Format("2006-01-02 15:04:05") + "]-[LOG:" + log + "]")
 						fmt.Println("[集群:", clusterId, "]-[用户:", userAccount, "]-[时间:", time.Now().Format("2006-01-02 15:04:05"), "]-[LOG:", log, "]")
